@@ -6,12 +6,11 @@ abstract class AuthRepository {
 
   Future<UserModel> signIn({required String email, required String password});
 
-  Future<UserModel> signUp(
-      {required String name, required String email, required String password});
+  Future<UserModel> signUp({required String name, required String email, required String password});
 
   Future<void> signOut();
 
-  Future<void> updateFcmToken(String user);
+  Future<void> updateFcmToken(String token);
 
   Future<UserModel?> getCurrentUser();
 }
