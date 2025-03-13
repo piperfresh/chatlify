@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   final String id;
   final String name;
@@ -35,8 +37,14 @@ class UserModel {
       name: json['name'],
       email: json['email'],
       photoUrl: json['photoUrl'],
-      createdAt: DateTime.parse(json['createdAt']),
-      lastActive: json['lastActive'] != null ? DateTime.parse(json['lastActive']) : null,
+      createdAt: json['createdAt'] is Timestamp
+          ? (json['createdAt'] as Timestamp).toDate()
+          : DateTime.parse(json['createdAt']),
+      lastActive: json['lastActive'] != null
+          ? (json['lastActive'] is Timestamp
+              ? (json['lastActive'] as Timestamp).toDate()
+              : DateTime.parse(json['lastActive']))
+          : null,
       fcmToken: json['fcmToken'],
     );
   }

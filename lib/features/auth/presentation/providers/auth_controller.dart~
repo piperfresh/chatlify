@@ -29,20 +29,23 @@ class AuthController extends StateNotifier<AsyncValue<UserModel?>> {
       state = AsyncValue.data(user);
       return true;
     } catch (e) {
+      print('Error ERRor $e');
       state = AsyncValue.error(e.toString(), StackTrace.current);
       return false;
     }
   }
 
-  Future<void> signUp(String email, String name, String password) async {
+  Future<bool> signUp(String email, String name, String password) async {
     state = const AsyncValue.loading();
     try {
       final user = await _ref
           .read(firebaseAuthRepositoryProvider)
           .signUp(name: name, email: email, password: password);
       state = AsyncValue.data(user);
+      return true;
     } catch (e) {
       state = AsyncValue.error(e.toString(), StackTrace.current);
+      return false;
     }
   }
 

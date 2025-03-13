@@ -1,5 +1,6 @@
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/presentation/screen/login_screen.dart';
+import 'package:chatlify/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,18 +26,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         next.when(
             data: (user) {
               if (user != null) {
-                print('user is null');
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const Scaffold(
-                        body: Center(child: Text('Chat Screen')),
-                      );
+                      return const ChatListScreen();
                     },
                   ),
                 );
               } else {
-                print('user is not null');
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                       builder: (_) => const LoginScreen()),

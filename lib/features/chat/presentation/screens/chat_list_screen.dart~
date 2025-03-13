@@ -11,10 +11,6 @@ class ChatListScreen extends ConsumerStatefulWidget {
 class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-
-      ),
-    );
+    return Scaffold();
   }
 }

@@ -14,10 +14,13 @@ class TextFieldWithTitle extends StatelessWidget {
   final void Function()? onTap;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
 
   const TextFieldWithTitle({
     super.key,
     required this.title,
+    this.validator,
     this.controller,
     this.hintText,
     this.hintStyle,
@@ -27,6 +30,7 @@ class TextFieldWithTitle extends StatelessWidget {
     this.onTap,
     this.inputFormatters,
     this.keyboardType,
+    this.onChanged,
   });
 
   @override
@@ -40,7 +44,7 @@ class TextFieldWithTitle extends StatelessWidget {
                 .bodySmall
                 ?.copyWith(fontSize: 18, color: AppColors.darkCardColor)),
        6.sbH,
-        TextField(
+        TextFormField(
           style: Theme.of(context)
               .textTheme
               .bodySmall
@@ -50,6 +54,8 @@ class TextFieldWithTitle extends StatelessWidget {
           keyboardType: keyboardType,
           onTap: onTap,
           maxLines: maxLines,
+          validator: validator,
+          onChanged: onChanged,
           decoration: InputDecoration(
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),

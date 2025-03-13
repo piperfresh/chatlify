@@ -1,7 +1,5 @@
-import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
-import 'package:chatlify/features/auth/presentation/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,7 +48,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final signUpAuth = ref.watch(authControllerProvider);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -91,7 +88,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 10.sbH,
                 PrimaryButton(
-                  isLoading: signUpAuth.isLoading,
+                  isLoading: ref.watch(authControllerProvider).isLoading,
                   onPressed: _formKey.currentState == null ||
                           !_formKey.currentState!.validate()
                       ? null
@@ -104,15 +101,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                   _passwordController.text.trim());
 
                           if (isSignUp) {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(
-                              builder: (context) {
-                                return const LoginScreen();
-                              },
-                            ));
-                          } else {
-                            appSnackBar(context, signUpAuth.error.toString());
-                          }
+                          } else {}
                         },
                   buttonText: 'Sign Up',
                 ),

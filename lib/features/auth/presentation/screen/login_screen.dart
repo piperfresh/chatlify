@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/common/app_textfield.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
@@ -24,62 +22,103 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  String? _emailCheck(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter email';
+    } else if (!value.contains('@')) {
+      return 'Please enter valid email';
+    }
+    return null;
+  }
+
+  String? _passwordCheck(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loginAuth = ref.watch(authControllerProvider);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Sign In', style: Theme.of(context).textTheme.titleLarge),
-            50.sbH,
-            TextFieldWithTitle(
-              title: 'Email',
-              controller: _emailController,
-            ),
-            10.sbH,
-            TextFieldWithTitle(
-              title: 'Password',
-              controller: _passwordController,
-            ),
-            30.sbH,
-            PrimaryButton(
-              isLoading: ref.watch(authControllerProvider).isLoading,
-              onPressed: () async {
-                final isLogin = await ref
-                    .read(authControllerProvider.notifier)
-                    .signIn(_emailController.text.trim(),
-                        _passwordController.text.trim());
-                if (isLogin) {
-                  Navigator.pushReplacement(
-                      context,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                100.sbH,
+                Text('Sign In', style: Theme.of(context).textTheme.titleLarge),
+                50.sbH,
+                TextFieldWithTitle(
+                  title: 'Email',
+                  controller: _emailController,
+                  validator: _emailCheck,
+                  onChanged: (p0) {
+                    setState(() {});
+                  },
+                ),
+                10.sbH,
+                TextFieldWithTitle(
+                  title: 'Password',
+                  controller: _passwordController,
+                  onChanged: (p0) {
+                    setState(() {});
+                  },
+                  validator: _passwordCheck,
+                ),
+                30.sbH,
+                PrimaryButton(
+                  isLoading: ref.watch(authControllerProvider).isLoading,
+                  onPressed: _formKey.currentState == null ||
+                          !_formKey.currentState!.validate()
+                      ? null
+                      : () async {
+                          final isLogin = await ref
+                              .read(authControllerProvider.notifier)
+                              .signIn(_emailController.text.trim(),
+                                  _passwordController.text.trim());
+                          if (isLogin) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ChatListScreen(),
+                                ));
+                          } else {
+                            print(loginAuth.error.toString());
+                            appSnackBar(context, loginAuth.error.toString());
+                          }
+                        },
+                  buttonText: 'Sign in',
+                ),
+                15.sbH,
+                AccountExistedOrNot(
+                  text: 'Don\'t have an account? ',
+                  buttonText: 'Sign Up',
+                  onTap: () {
+                    Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const ChatListScreen(),
-                      ));
-                } else {
-                  appSnackBar(context,
-                      ref.watch(authControllerProvider).error.toString());
-                }
-
-                log('${_emailController.text}${_passwordController.text}');
-              },
-              buttonText: 'Sign in',
+                        builder: (_) => const SignUpScreen(),
+                      ),
+                    );
+                  },
+                )
+              ],
             ),
-            15.sbH,
-            AccountExistedOrNot(
-              text: 'Don\'t have an account? ',
-              buttonText: 'Sign Up',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const SignUpScreen(),
-                  ),
-                );
-              },
-            )
-          ],
+          ),
         ),
       ),
     );

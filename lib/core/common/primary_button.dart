@@ -11,7 +11,7 @@ class PrimaryButton extends StatelessWidget {
     this.isLoading = false,
   });
 
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final String buttonText;
   final bool isLoading;
 
