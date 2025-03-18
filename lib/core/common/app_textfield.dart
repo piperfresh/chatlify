@@ -16,6 +16,7 @@ class TextFieldWithTitle extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final bool isTitle;
 
   const TextFieldWithTitle({
     super.key,
@@ -31,6 +32,7 @@ class TextFieldWithTitle extends StatelessWidget {
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
+    this.isTitle = true,
   });
 
   @override
@@ -38,12 +40,14 @@ class TextFieldWithTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: Theme.of(context)
+        isTitle
+            ? Text(title,
+                style: Theme.of(context)
                 .textTheme
                 .bodySmall
-                ?.copyWith(fontSize: 18, color: AppColors.darkCardColor)),
-       6.sbH,
+                    ?.copyWith(fontSize: 18, color: AppColors.darkCardColor))
+            : const SizedBox.shrink(),
+        6.sbH,
         TextFormField(
           style: Theme.of(context)
               .textTheme

@@ -68,4 +68,9 @@ class UserModel {
       fcmToken: fcmToken ?? this.fcmToken,
     );
   }
+
+  @override
+  String toString() {
+    return 'UserModel{name: $name}';
+  }
 }

@@ -154,9 +154,7 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
   }
 }
 
-final chatControllerProvider =
-    StateNotifierProvider<ChatController, AsyncValue<List<ChatModel>>>(
-  (ref) {
-    return ChatController(ref, const Uuid());
-  },
-);
+
+final chatControllerProvider = StateNotifierProvider<ChatController,AsyncValue<List<ChatModel>>>((ref) {
+  
+},);

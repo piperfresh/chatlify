@@ -98,7 +98,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   builder: (context) => const ChatListScreen(),
                                 ));
                           } else {
-                            print(loginAuth.error.toString());
                             appSnackBar(context, loginAuth.error.toString());
                           }
                         },
