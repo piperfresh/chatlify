@@ -8,6 +8,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
+final chatUserStreamProvider =
+    StreamProvider.family<UserModel?, String>((ref, userId) {
+  return ref.read(firebaseChatRepositoryProvider).getUserStream(userId);
+});
+
+final chatControllerProvider =
+    StateNotifierProvider<ChatController, AsyncValue<List<ChatModel>>>(
+  (ref) {
+    return ChatController(ref, const Uuid());
+  },
+);
+
 class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
   ChatController(this._ref, this._uuid) : super(const AsyncValue.loading()) {
     _loadChats();
@@ -154,9 +166,3 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
   }
 }
 
-final chatControllerProvider =
-    StateNotifierProvider<ChatController, AsyncValue<List<ChatModel>>>(
-  (ref) {
-    return ChatController(ref, const Uuid());
-  },
-);

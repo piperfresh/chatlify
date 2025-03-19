@@ -1,12 +1,19 @@
+import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/domain/models/user_model.dart';
-import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
+/// This is to get all the user
 final allUsersProvider = FutureProvider(
   (ref) async {
-    final allUsers =
-        await ref.read(authControllerProvider.notifier).getAllUsers();
-    return allUsers.whereType<UserModel>().toList();
+    final repository = ref.read(firebaseAuthRepositoryProvider);
+
+    try {
+      final allUsers = await repository.getAllUser();
+      return allUsers.whereType<UserModel>().toList();
+    } catch (e) {
+      throw Exception('Failed to load user ${e.toString()}');
+    }
   },
 );
 

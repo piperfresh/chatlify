@@ -1,24 +1,26 @@
+import 'package:chatlify/core/common/app_snack_bar.dart';
+import 'package:chatlify/core/common/app_textfield.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
+import 'package:chatlify/features/auth/presentation/screen/sign_up_screen.dart';
+import 'package:chatlify/features/auth/presentation/widgets/account_existed_or_not.dart';
+import 'package:chatlify/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/common/app_textfield.dart';
 import '../../../../core/common/primary_button.dart';
-import '../widgets/account_existed_or_not.dart';
 
-class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  ConsumerState createState() => _SignUpScreenState();
+  ConsumerState createState() => _LoginScreenState();
 }
 
-class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
 
   String? _emailCheck(value) {
     if (value == null || value.isEmpty) {
@@ -39,15 +41,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     return null;
   }
 
-  String? _nameCheck(value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your name';
-    }
-    return null;
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loginAuth = ref.watch(authControllerProvider);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -58,7 +61,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 100.sbH,
-                Text('Sign Up', style: Theme.of(context).textTheme.titleLarge),
+                Text('Sign In', style: Theme.of(context).textTheme.titleLarge),
                 50.sbH,
                 TextFieldWithTitle(
                   title: 'Email',
@@ -70,45 +73,51 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 10.sbH,
                 TextFieldWithTitle(
-                  title: 'Name',
-                  controller: _nameController,
-                  validator: _nameCheck,
-                  onChanged: (p0) {
-                    setState(() {});
-                  },
-                ),
-                10.sbH,
-                TextFieldWithTitle(
                   title: 'Password',
                   controller: _passwordController,
-                  validator: _passwordCheck,
                   onChanged: (p0) {
                     setState(() {});
                   },
+                  validator: _passwordCheck,
                 ),
-                10.sbH,
+                30.sbH,
                 PrimaryButton(
                   isLoading: ref.watch(authControllerProvider).isLoading,
                   onPressed: _formKey.currentState == null ||
                           !_formKey.currentState!.validate()
                       ? null
                       : () async {
-                          final isSignUp = await ref
+                          final isLogin = await ref
                               .read(authControllerProvider.notifier)
-                              .signUp(
-                                  _emailController.text.trim(),
-                                  _nameController.text.trim(),
+                              .signIn(_emailController.text.trim(),
                                   _passwordController.text.trim());
-
-                          if (isSignUp) {
-                          } else {}
+                          if (isLogin) {
+                            if (context.mounted) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ChatListScreen(),
+                                  ));
+                            }
+                            // Navigator.pushReplacement(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => const ChatListScreen(),
+                            //     ));
+                          } else {
+                            if (context.mounted) {
+                              appSnackBar(context, loginAuth.error.toString());
+                            }
+                            // appSnackBar(context, loginAuth.error.toString());
+                          }
                         },
-                  buttonText: 'Sign Up',
+                  buttonText: 'Sign in',
                 ),
                 15.sbH,
                 AccountExistedOrNot(
-                  text: 'Already have an account? ',
-                  buttonText: 'Sign In',
+                  text: 'Don\'t have an account? ',
+                  buttonText: 'Sign Up',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(

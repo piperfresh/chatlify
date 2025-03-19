@@ -1,6 +1,7 @@
 import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
+import 'package:chatlify/features/auth/presentation/providers/sign_up_form_notifier.dart';
 import 'package:chatlify/features/auth/presentation/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
-  String? _emailCheck(value) {
+  String? _emailCheck(String? value, bool touched) {
+    if (!touched) return null;
     if (value == null || value.isEmpty) {
       return 'Please enter email';
     } else if (!value.contains('@')) {
@@ -31,7 +33,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     return null;
   }
 
-  String? _passwordCheck(value) {
+  String? _passwordCheck(String? value, bool touched) {
+    if (!touched) return null;
+
     if (value == null || value.isEmpty) {
       return 'Please enter your password';
     }
@@ -51,12 +55,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final signUpAuth = ref.watch(authControllerProvider);
+    final signUpFormState = ref.watch(signUpFormNotifierProvider);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.always,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,9 +73,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 TextFieldWithTitle(
                   title: 'Email',
                   controller: _emailController,
-                  validator: _emailCheck,
+                  validator: (value) =>
+                      _emailCheck(value, signUpFormState.isEmailTouched),
                   onChanged: (p0) {
                     setState(() {});
+                  },
+                  onFocusChange: (hasFocus) {
+                    if (!hasFocus && !signUpFormState.isEmailTouched) {
+                      ref
+                          .read(signUpFormNotifierProvider.notifier)
+                          .setEmailTouched();
+                    }
                   },
                 ),
                 10.sbH,
@@ -84,7 +99,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 TextFieldWithTitle(
                   title: 'Password',
                   controller: _passwordController,
-                  validator: _passwordCheck,
+                  validator: (value) => _passwordCheck(value, signUpFormState.isPasswordTouched),
+                  onFocusChange: (hasFocus) {
+                    if(!hasFocus && !signUpFormState.isPasswordTouched){
+                      ref.read(signUpFormNotifierProvider.notifier).setPasswordTouched();
+                    }
+                  },
                   onChanged: (p0) {
                     setState(() {});
                   },
@@ -123,7 +143,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const SignUpScreen(),
+                        builder: (_) => const LoginScreen(),
                       ),
                     );
                   },

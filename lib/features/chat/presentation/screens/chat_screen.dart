@@ -36,7 +36,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     try {
       await ref
           .read(chatControllerProvider.notifier)
-          .sendTextMessage(widget.chatId, message);
+          .sendTextMessage(widget.chatId, message.trim());
       _scrollToBottom();
     } catch (e) {
       if (mounted) {
@@ -114,7 +114,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               backgroundImage: widget.otherUser.photoUrl != null
                   ? NetworkImage(widget.otherUser.photoUrl!)
                   : null,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+              // backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
               child: widget.otherUser.photoUrl == null
                   ? Text(
                       widget.otherUser.name[0].toUpperCase(),
@@ -132,7 +133,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 children: [
                   Text(
                     widget.otherUser.name,
-                    style: const TextStyle(fontSize: 16),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontSize: 16),
                   ),
                   Text(
                     'Online',
@@ -205,20 +209,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   reverse: true,
                   itemBuilder: (context, index) {
                     final message = messages[index];
-                    print('This is the message ${message.chatId}');
-                    print('This is the message sender ${message.senderId}');
+
                     final isMe = message.senderId ==
                         ref
                             .watch(authControllerProvider)
                             .value
                             ?.currentUser
                             ?.id;
-                    print( ref
-                        .watch(authControllerProvider)
-                        .value
-                        ?.currentUser
-                        ?.email);
-                    print('This is me $isMe');
                     return MessageBubble(
                       message: message,
                       isMe: isMe,

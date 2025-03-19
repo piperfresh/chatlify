@@ -25,6 +25,20 @@ class FirebaseChatRepository implements ChatRepository {
   final Uuid _uuid;
 
   @override
+  Stream<UserModel?> getUserStream(String userId) {
+    return _fireStore
+        .collection(AppConstants.users)
+        .doc(userId)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return UserModel.fromJson(snapshot.data()!);
+      }
+      return null;
+    });
+  }
+
+  @override
   Stream<List<ChatModel>> getUserChats(String userId) {
     return _fireStore
         .collection(AppConstants.chats)

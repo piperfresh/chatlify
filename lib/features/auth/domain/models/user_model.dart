@@ -71,6 +71,6 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel{name: $name}';
+    return 'UserModel{id: $id, name: $name, email: $email, photoUrl: $photoUrl, createdAt: $createdAt, lastActive: $lastActive, fcmToken: $fcmToken}';
   }
 }

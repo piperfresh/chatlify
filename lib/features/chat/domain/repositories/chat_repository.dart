@@ -3,6 +3,8 @@ import 'package:chatlify/features/chat/domain/model/chat_model.dart';
 import 'package:chatlify/features/chat/domain/model/message_model.dart';
 
 abstract class ChatRepository {
+  Stream<UserModel?> getUserStream(String userId);
+
   Stream<List<ChatModel>> getUserChats(String userId);
 
   Stream<List<MessageModel>> getChatMessages(String chatId);

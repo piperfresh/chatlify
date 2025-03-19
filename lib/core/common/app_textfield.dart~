@@ -17,7 +17,6 @@ class TextFieldWithTitle extends StatelessWidget {
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
   final bool isTitle;
-  final void Function(bool)? onFocusChange;
 
   const TextFieldWithTitle({
     super.key,
@@ -34,7 +33,6 @@ class TextFieldWithTitle extends StatelessWidget {
     this.keyboardType,
     this.onChanged,
     this.isTitle = true,
-    this.onFocusChange,
   });
 
   @override
@@ -50,36 +48,33 @@ class TextFieldWithTitle extends StatelessWidget {
                     ?.copyWith(fontSize: 18, color: AppColors.darkCardColor))
             : const SizedBox.shrink(),
         6.sbH,
-        Focus(
-          onFocusChange: onFocusChange,
-          child: TextFormField(
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(fontSize: 16, color: AppColors.darkCardColor),
-            controller: controller,
-            inputFormatters: inputFormatters,
-            keyboardType: keyboardType,
-            onTap: onTap,
-            maxLines: maxLines,
-            validator: validator,
-            onChanged: onChanged,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(color: AppColors.darkCardColor)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(color: AppColors.darkCardColor)),
-              contentPadding: contentPadding ?? const EdgeInsets.all(10),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: hintText,
-              hintStyle: hintStyle ??
-                  Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 16,
-                      ),
-            ),
+        TextFormField(
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(fontSize: 16, color: AppColors.darkCardColor),
+          controller: controller,
+          inputFormatters: inputFormatters,
+          keyboardType: keyboardType,
+          onTap: onTap,
+          maxLines: maxLines,
+          validator: validator,
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(color: AppColors.darkCardColor)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(color: AppColors.darkCardColor)),
+            contentPadding: contentPadding ?? const EdgeInsets.all(10),
+            filled: true,
+            fillColor: Colors.white,
+            hintText: hintText,
+            hintStyle: hintStyle ??
+                Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 16,
+                    ),
           ),
         ),
       ],

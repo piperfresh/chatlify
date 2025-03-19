@@ -7,7 +7,15 @@ import 'package:chatlify/features/chat/domain/model/message_model.dart';
 import 'package:chatlify/features/chat/domain/repositories/chat_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
+final firebaseChatRepositoryProvider = Provider(
+  (ref) {
+    return FirebaseChatRepository(
+        FirebaseFirestore.instance, FirebaseStorage.instance, const Uuid());
+  },
+);
 
 class FirebaseChatRepository implements ChatRepository {
   FirebaseChatRepository(this._fireStore, this._firebaseStorage, this._uuid);
@@ -15,6 +23,22 @@ class FirebaseChatRepository implements ChatRepository {
   final FirebaseFirestore _fireStore;
   final FirebaseStorage _firebaseStorage;
   final Uuid _uuid;
+
+  @override
+  Stream<UserModel?> getUserStream(String userId) {
+    return _fireStore
+        .collection(AppConstants.users)
+        .doc(userId)
+        .snapshots()
+        .map(
+      (snapshot) {
+        if (snapshot.exists) {
+          return UserModel.fromJson(snapshot.data()!);
+        }
+        return null;
+      },
+    );
+  }
 
   @override
   Stream<List<ChatModel>> getUserChats(String userId) {

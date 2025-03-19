@@ -92,13 +92,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               .signIn(_emailController.text.trim(),
                                   _passwordController.text.trim());
                           if (isLogin) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ChatListScreen(),
-                                ));
+                            if (context.mounted) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ChatListScreen(),
+                                  ));
+                            }
                           } else {
-                            appSnackBar(context, loginAuth.error.toString());
+                            if (context.mounted) {
+                              appSnackBar(context, loginAuth.error.toString());
+                            }
                           }
                         },
                   buttonText: 'Sign in',
