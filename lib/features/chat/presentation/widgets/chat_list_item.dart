@@ -10,7 +10,12 @@ class ChatListItem extends StatelessWidget {
       required this.lastMessage,
       required this.time,
       required this.unreadCount,
-      required this.onTap});
+    required this.onTap,
+    // this.currentUserId,
+    // this.lastMessageSenderId,
+    this.isOutgoing = false,
+    this.isRead = false,
+  });
 
   final String name;
   final String? photoUrl;
@@ -19,21 +24,15 @@ class ChatListItem extends StatelessWidget {
   final int unreadCount;
   final VoidCallback onTap;
 
+  // final String? lastMessageSenderId;
+  // final String? currentUserId;
+  final bool isOutgoing;
+  final bool isRead;
+
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = DateTime(now.year, now.month, now.day - 1);
-    final messageDate = DateTime(time.year, time.month, time.day);
-
-    String timeString;
-    if (messageDate == today) {
-      timeString = DateFormat('HH:mm').format(time);
-    } else if (messageDate == yesterday) {
-      timeString = 'Yesterday';
-    } else {
-      timeString = DateFormat('MM/dd').format(time);
-    }
+    // final bool isRead = unreadCount == 0;
+    // final bool isOutGoing = currentUserId == lastMessageSenderId;
 
     return InkWell(
       onTap: onTap,
@@ -68,7 +67,7 @@ class ChatListItem extends StatelessWidget {
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       Text(
-                        timeString,
+                        formatChatTime(time),
                         style: TextStyle(
                           color: unreadCount > 0
                               ? Theme.of(context).primaryColor
@@ -80,6 +79,17 @@ class ChatListItem extends StatelessWidget {
                   4.sbH,
                   Row(
                     children: [
+                      if (isOutgoing)
+                        Icon(
+                          isRead ? Icons.done_all : Icons.done,
+                          color: isRead
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                        ),
+                      if (isOutgoing) 4.sbW,
                       Expanded(
                         child: Text(
                           lastMessage,
@@ -121,5 +131,22 @@ class ChatListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String formatChatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final messageDate = DateTime(time.year, time.month, time.day);
+
+    if (messageDate == today) {
+      return DateFormat('HH:mm').format(dateTime);
+    } else if (messageDate == yesterday) {
+      return 'Yesterday';
+    } else if (now.difference(dateTime).inDays < 7) {
+      return DateFormat('EEEE').format(dateTime); // Day name
+    } else {
+      return DateFormat('MM/dd/yyyy').format(dateTime);
+    }
   }
 }

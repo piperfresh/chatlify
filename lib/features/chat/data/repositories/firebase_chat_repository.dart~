@@ -30,14 +30,12 @@ class FirebaseChatRepository implements ChatRepository {
         .collection(AppConstants.users)
         .doc(userId)
         .snapshots()
-        .map(
-      (snapshot) {
-        if (snapshot.exists) {
-          return UserModel.fromJson(snapshot.data()!);
-        }
-        return null;
-      },
-    );
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return UserModel.fromJson(snapshot.data()!);
+      }
+      return null;
+    });
   }
 
   @override
@@ -123,23 +121,12 @@ class FirebaseChatRepository implements ChatRepository {
   }
 
   @override
-  Future<void> markMessageAsRead(String messageId) async {
-    try {
-      await _fireStore.collection(AppConstants.chats).doc(messageId).update({
-        AppConstants.isRead: true,
-      });
-    } catch (e) {
-      throw Exception('Failed to mark message as read ${e.toString()}');
-    }
-  }
-
-  @override
   Future<List<UserModel>> searchUser(String query) async {
     try {
       final querySnapshot = await _fireStore
           .collection(AppConstants.users)
           .where(AppConstants.name, isGreaterThanOrEqualTo: query)
-          .where(AppConstants.name, isGreaterThanOrEqualTo: '$query\uf8ff')
+          .where(AppConstants.name, isLessThanOrEqualTo: '$query\uf8ff')
           .get();
 
       return querySnapshot.docs.map(
@@ -155,26 +142,69 @@ class FirebaseChatRepository implements ChatRepository {
   @override
   Future<void> sendMessage(MessageModel message) async {
     try {
-      /// Add message to FireStore
+      /// Initialize read status with all participants set to false except sender
+      final chatSnapshot = await _fireStore
+          .collection(AppConstants.chats)
+          .doc(message.chatId)
+          .get();
+
+      if (!chatSnapshot.exists) {
+        throw Exception('Chat not found');
+      }
+
+      final chatData = chatSnapshot.data()!;
+      final List<String> participantIds =
+          List<String>.from(chatData['participantIds']);
+
+      Map<String, bool> readStatus = {};
+      for (String participantId in participantIds) {
+        /// Sender has already "read" their own message
+        readStatus[participantId] = participantId == message.senderId;
+      }
+
+      /// Create a copy of the message with the read status
+      final updatedMessage = MessageModel(
+        messageId: message.messageId,
+        chatId: message.chatId,
+        senderId: message.senderId,
+        content: message.content,
+        type: message.type,
+        timestamp: message.timestamp,
+        isRead: false,
+        readStatus: readStatus,
+      );
+
+      // Add message to FireStore
       await _fireStore
           .collection(AppConstants.messages)
-          .doc(message.id)
-          .set(message.toJson());
+          .doc(message.messageId)
+          .set(updatedMessage.toJson());
 
-      /// Update chat with last message details
+      // Update chat with last message details and increment unread count for each participant except sender
+      Map<String, dynamic> chatUpdates = {
+        AppConstants.lastMessageAt: FieldValue.serverTimestamp(),
+        AppConstants.lastMessageText: message.content,
+      };
+
+      // Increment unread count for each participant except sender
+      for (String participantId in participantIds) {
+        if (participantId != message.senderId) {
+          chatUpdates['unreadCount.$participantId'] = FieldValue.increment(1);
+        } else {
+          // Mark the message as read for the sender
+          chatUpdates['unreadCount.$participantId'] = 0;
+        }
+      }
+
       await _fireStore
           .collection(AppConstants.chats)
           .doc(message.chatId)
-          .update({
-        AppConstants.lastMessageAt: FieldValue.serverTimestamp(),
-        AppConstants.lastMessageText: message.content,
-        AppConstants.unreadCount: FieldValue.increment(1),
-      });
+          .update(chatUpdates);
     } catch (e) {
       throw Exception('Failed to send message ${e.toString()}');
     }
   }
-
+  
   @override
   Future<String> uploadImage(String path) async {
     try {
@@ -189,7 +219,72 @@ class FirebaseChatRepository implements ChatRepository {
 
       return downloadUrl;
     } catch (e) {
+      print('Upload error $e');
       throw Exception('Failed to upload image $e');
+    }
+  }
+
+  @override
+  Future<void> markChatAsRead(String chatId, String userId) async {
+    try {
+      /// Update the unread count for this user to 0
+      Map<String, dynamic> update = {};
+      update['unreadCount.$userId'] = 0;
+
+      await _fireStore
+          .collection(AppConstants.chats)
+          .doc(chatId)
+          .update(update);
+
+      /// Also mark all unread messages as read
+      final unreadMessages = await _fireStore
+          .collection(AppConstants.messages)
+          .where('chatId', isEqualTo: chatId)
+          .where('isRead', isEqualTo: false)
+          .where('senderId', isNotEqualTo: userId)
+          .get();
+
+      /// Create a batch to update multiple documents at once
+      final batch = _fireStore.batch();
+
+      for (var doc in unreadMessages.docs) {
+        Map<String, dynamic> readStatusUpdate = {};
+        readStatusUpdate['readStatus.$userId'] = true;
+        readStatusUpdate['isRead'] = true;
+
+        batch.update(doc.reference, readStatusUpdate);
+      }
+
+      await batch.commit();
+    } catch (e) {
+      throw Exception('Failed to mark chat as read ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> markMessageAsRead(String messageId, String userId) async {
+    try {
+      /// Get the message first
+      final docSnapshot = await _fireStore
+          .collection(AppConstants.messages)
+          .doc(messageId)
+          .get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('Message not found');
+      }
+
+      ///Update the message read status
+      Map<String, dynamic> readStatusUpdate = {};
+      readStatusUpdate['readStatus.$userId'] = true;
+      readStatusUpdate['isRead'] = true;
+
+      await _fireStore
+          .collection(AppConstants.messages)
+          .doc(messageId)
+          .update(readStatusUpdate);
+    } catch (e) {
+      throw Exception('Failed to mark message as read ${e.toString()}');
     }
   }
 }

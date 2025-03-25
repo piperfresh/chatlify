@@ -72,11 +72,14 @@ class FirebaseAuthRepository implements AuthRepository {
         throw Exception('Sign in failed');
       }
 
-      /// Update last active
+      /// Update last active and online
       await fireStore
           .collection(AppConstants.users)
           .doc(userCredential.user?.uid)
-          .update({'lastActive': FieldValue.serverTimestamp()});
+          .update({
+        'lastActive': FieldValue.serverTimestamp(),
+        'isOnline': true,
+      });
 
       /// Get user data
       final userData = await fireStore
@@ -93,6 +96,13 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
+      final user = firebaseAuth.currentUser;
+      // Update user status to offline before signing out
+      if (user != null) {
+        await fireStore.collection(AppConstants.users).doc(user.uid).update(
+            {'lastActive': FieldValue.serverTimestamp(), 'isOnline': false});
+      }
+
       await firebaseAuth.signOut();
     } catch (e) {
       throw Exception('Sign out failed ${e.toString()}');
@@ -120,7 +130,7 @@ class FirebaseAuthRepository implements AuthRepository {
         email: email,
         createdAt: DateTime.now(),
         lastActive: DateTime.now(),
-      );
+          isOnline: true);
 
       /// Save data to firebase
       await fireStore
@@ -149,6 +159,24 @@ class FirebaseAuthRepository implements AuthRepository {
       });
     } catch (e) {
       throw Exception('Update fcm token failed ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> updateOnlineStatus(bool isOnline) async {
+    try {
+      final user = firebaseAuth.currentUser;
+
+      if (user == null) return;
+
+      await fireStore.collection(AppConstants.users).doc(user.uid).update({
+        'isOnline': isOnline,
+        'lastActive': isOnline
+            ? FieldValue.serverTimestamp()
+            : FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Update online status failed ${e.toString()}');
     }
   }
 }

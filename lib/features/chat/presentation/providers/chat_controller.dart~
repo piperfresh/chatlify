@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-/// To track the last message sender
 final lastMessageProvider = StreamProvider.family<List<MessageModel>?, String>(
       (ref, chatId) {
     return ref.watch(chatControllerProvider.notifier)

@@ -8,7 +8,7 @@ class UserModel {
   final DateTime createdAt;
   final DateTime? lastActive;
   final String? fcmToken;
-  final bool isOnline;
+  final bool online;
 
   UserModel({
     required this.id,
@@ -18,7 +18,7 @@ class UserModel {
     required this.createdAt,
     this.lastActive,
     this.fcmToken,
-    this.isOnline = false,
+    this.online = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,7 +30,7 @@ class UserModel {
       'createdAt': createdAt.toIso8601String(),
       'lastActive': lastActive?.toIso8601String(),
       'fcmToken': fcmToken,
-      'isOnline': isOnline,
+      'isOnline': online,
     };
   }
 
@@ -49,7 +49,7 @@ class UserModel {
               : DateTime.parse(json['lastActive']))
           : null,
       fcmToken: json['fcmToken'],
-      isOnline: json['isOnline'] ?? false,
+      online: json['isOnline'] ?? false,
     );
   }
 
@@ -61,7 +61,6 @@ class UserModel {
     DateTime? createdAt,
     DateTime? lastActive,
     String? fcmToken,
-    bool? isOnline,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -71,12 +70,11 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       lastActive: lastActive ?? this.lastActive,
       fcmToken: fcmToken ?? this.fcmToken,
-      isOnline: isOnline ?? this.isOnline,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel{id: $id, name: $name, email: $email, photoUrl: $photoUrl, createdAt: $createdAt, lastActive: $lastActive, fcmToken: $fcmToken, isOnline: $isOnline}';
+    return 'UserModel{id: $id, name: $name, email: $email, photoUrl: $photoUrl, createdAt: $createdAt, lastActive: $lastActive, fcmToken: $fcmToken}';
   }
 }

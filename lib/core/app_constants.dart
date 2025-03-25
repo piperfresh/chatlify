@@ -12,4 +12,5 @@ class AppConstants{
   static const timestamp = 'timestamp';
   static const isRead = 'isRead';
   static const chatImages = 'chat_images';
+  static const lastMessageSenderId = 'lastMessageSenderId';
 }

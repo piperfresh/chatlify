@@ -11,7 +11,11 @@ abstract class ChatRepository {
 
   Future<void> sendMessage(MessageModel message);
 
-  Future<void> markMessageAsRead(String messageId);
+  // Future<void> markMessageAsRead(String messageId);
+
+  Future<void> markChatAsRead(String chatId, String userId);
+
+  Future<void> markMessageAsRead(String messageId, String userId);
 
   Future<void> createChat(ChatModel chat);
 

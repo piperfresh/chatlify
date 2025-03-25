@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/presentation/providers/auth_controller.dart';
+import '../../domain/model/message_model.dart';
 import 'chat_screen.dart';
 
 class ChatListScreen extends ConsumerStatefulWidget {
@@ -73,6 +74,8 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                 orElse: () => chat.participantIds.first,
               );
 
+              // final String? lastMessageSenderId = chat.lastMessageSenderId;
+
               return Consumer(
                 builder: (context, ref, child) {
                   final userAsyncValue =
@@ -81,22 +84,76 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                   return userAsyncValue.when(
                     data: (otherUser) {
                       if (otherUser == null) return const SizedBox();
-                      return ChatListItem(
-                        name: otherUser.name,
-                        lastMessage:
-                            chat.lastMessageText ?? 'Start a conversation',
-                        time: chat.lastMessageAt,
-                        unreadCount: chat.unreadCount[currentUserId] ?? 0,
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) {
-                              return ChatScreen(
-                                chatId: chat.id,
-                                otherUser: otherUser,
-                              );
+
+                      final lastMessageAsync =
+                          ref.watch(lastMessageProvider(chat.id));
+                      return lastMessageAsync.when(
+                        data: (lastMessageData) {
+                          final lastMessage =
+                              lastMessageData?.isNotEmpty == true
+                                  ? lastMessageData!.first
+                                  : null;
+                          final isOutgoing =
+                              lastMessage?.senderId == currentUserId;
+                          final isRead = lastMessage != null && isOutgoing
+                              ? _isMessageReadByReceiver(
+                                  lastMessage, otherUserId)
+                              : false;
+
+                          return ChatListItem(
+                            name: otherUser.name,
+                            lastMessage:
+                                chat.lastMessageText ?? 'Start a conversation',
+                            time: chat.lastMessageAt,
+                            unreadCount: chat.unreadCount[currentUserId] ?? 0,
+                            isOutgoing: isOutgoing,
+                            isRead: isRead,
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) {
+                                  return ChatScreen(
+                                    chatId: chat.id,
+                                    otherUser: otherUser,
+                                  );
+                                },
+                              ));
                             },
-                          ));
+                          );
                         },
+                        loading: () => ChatListItem(
+                          name: otherUser.name,
+                          lastMessage:
+                              chat.lastMessageText ?? 'Start a conversation',
+                          time: chat.lastMessageAt,
+                          unreadCount: chat.unreadCount[currentUserId] ?? 0,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) {
+                                return ChatScreen(
+                                  chatId: chat.id,
+                                  otherUser: otherUser,
+                                );
+                              },
+                            ));
+                          },
+                        ),
+                        error: (_, __) => ChatListItem(
+                          name: otherUser.name,
+                          lastMessage:
+                              chat.lastMessageText ?? 'Start a conversation',
+                          time: chat.lastMessageAt,
+                          unreadCount: chat.unreadCount[currentUserId] ?? 0,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) {
+                                return ChatScreen(
+                                  chatId: chat.id,
+                                  otherUser: otherUser,
+                                );
+                              },
+                            ));
+                          },
+                        ),
                       );
                     },
                     error: (error, stackTrace) {
@@ -114,7 +171,6 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
           );
         },
         error: (error, stackTrace) {
-          print(error.toString());
           return Center(
             child: Text(
               'Error: ${error.toString()}',
@@ -137,5 +193,10 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
         child: const Icon(Icons.chat),
       ),
     );
+  }
+
+  /// Helper method to check if a message has been read by the receiver
+  bool _isMessageReadByReceiver(MessageModel message, String receiverId) {
+    return message.readStatus[receiverId] == true;
   }
 }

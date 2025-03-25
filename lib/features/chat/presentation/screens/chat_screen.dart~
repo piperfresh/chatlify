@@ -147,11 +147,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               .toList();
 
           /// Mark them as read if there are any
-          if (unreadMessages.isNotEmpty) {
-            for (final message in unreadMessages) {
-              ref
-                  .read(chatControllerProvider.notifier)
-                  .markMessageAsRead(message.messageId);
+          if(unreadMessages.isNotEmpty){
+            for(final message in unreadMessages){
+              ref.read(chatControllerProvider.notifier).
             }
           }
         }

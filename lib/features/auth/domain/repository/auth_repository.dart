@@ -13,4 +13,6 @@ abstract class AuthRepository {
   Future<void> updateFcmToken(String token);
 
   Future<UserModel?> getCurrentUser();
+
+  Future<void> updateOnlineStatus(bool isOnline);
 }
