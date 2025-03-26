@@ -205,5 +205,22 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
       throw Exception('Failed to get user: ${e.toString()}');
     }
   }
+
+  Future<void> resetUnreadCount(String chatId) async {
+    try {
+      final currentUser =
+          await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
+
+      if (currentUser == null) {
+        throw Exception('Not authenticated');
+      }
+
+      await _ref
+          .read(firebaseChatRepositoryProvider)
+          .markChatAsRead(chatId, currentUser.id);
+    } catch (e) {
+      throw Exception('Failed to reset unread count: ${e.toString()}');
+    }
+  }
 }
 

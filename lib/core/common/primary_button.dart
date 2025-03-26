@@ -9,11 +9,13 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     required this.buttonText,
     this.isLoading = false,
+    this.isActive = false,
   });
 
   final void Function()? onPressed;
   final String buttonText;
   final bool isLoading;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,12 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
+            backgroundColor: isActive
+                ? Theme.of(context).primaryColor
+                : Colors.grey.shade400,
             foregroundColor: AppColors.background,
           ),
-          onPressed: onPressed,
+          onPressed: isActive ? onPressed : null,
           child: isLoading
               ? const Loader()
               : Text(

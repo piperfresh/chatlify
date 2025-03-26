@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/common/app_textfield.dart';
 import 'package:chatlify/core/common/loader.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
@@ -62,12 +63,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       _scrollToBottom();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to send message: ${e.toString()}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        appSnackBar(context, 'Failed to send message: ${e.toString()}');
       }
     }
   }
@@ -124,6 +120,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _scrollController.dispose();
     _messageController.dispose();
     _onlineStatusTimer?.cancel();
+
     super.dispose();
   }
 
@@ -308,65 +305,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   return const Loader();
                 },
               )),
-          // Expanded(
-          //   child: StreamBuilder<List<MessageModel>>(
-          //     stream: ref
-          //         .read(chatControllerProvider.notifier)
-          //         .getChatMessages(widget.chatId),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         return const Loader();
-          //       }
-          //
-          //       if (snapshot.hasError) {
-          //         return Center(
-          //           child: Text(
-          //             'Error:${snapshot.error}',
-          //             style:
-          //                 TextStyle(color: Theme.of(context).colorScheme.error),
-          //           ),
-          //         );
-          //       }
-          //
-          //       final messages = snapshot.data ?? [];
-          //
-          //       if (messages.isEmpty) {
-          //         return Center(
-          //           child: Text(
-          //             'No messages yet',
-          //             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          //                   color: Theme.of(context)
-          //                       .colorScheme
-          //                       .onSurface
-          //                       .withOpacity(0.5),
-          //                 ),
-          //           ),
-          //         );
-          //       }
-          //
-          //       return ListView.builder(
-          //         controller: _scrollController,
-          //         itemCount: messages.length,
-          //         reverse: true,
-          //         itemBuilder: (context, index) {
-          //           final message = messages[index];
-          //
-          //           final isMe = message.senderId ==
-          //               ref
-          //                   .watch(authControllerProvider)
-          //                   .value
-          //                   ?.currentUser
-          //                   ?.id;
-          //           return MessageBubble(
-          //             message: message,
-          //             isMe: isMe,
-          //             onTap: () {},
-          //           );
-          //         },
-          //       );
-          //     },
-          //   ),
-          // ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             decoration: BoxDecoration(

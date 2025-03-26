@@ -165,41 +165,26 @@ class MessageBubble extends StatelessWidget {
                               fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          2.sbH,
                           Align(
                             alignment: Alignment.bottomRight,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  DateFormat('h:mm a')
-                                      .format(message.timestamp),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: timeColor,
+                                if(!isMe)...[
+                                  Text(
+                                    DateFormat('h:mm a')
+                                        .format(message.timestamp),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: timeColor,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 4),
-                                // if (isMe)
-                                //   Icon(
-                                //     message.isRead ? Icons.done_all : Icons.done,
-                                //     size: 14,
-                                //     color: timeColor,
-                                //   ),
+                                ],
+                                 4.sbW,
                                 if (isMe) ...[
                                   const SizedBox(width: 4),
-                                  // Read receipt icon
                                   _buildReadStatus(message, isMe),
-                                  // Icon(
-                                  //   // Double check if read by all participants, single check otherwise
-                                  //   _isReadByAll(message)
-                                  //       ? Icons.done_all
-                                  //       : Icons.done,
-                                  //   size: 14,
-                                  //   color: _isReadByAll(message)
-                                  //       ? Colors.blue
-                                  //       : Colors.white.withOpacity(0.7),
-                                  // ),
                                 ],
                               ],
                             ),
@@ -268,7 +253,7 @@ class MessageBubble extends StatelessWidget {
         ),
         4.sbW,
         Text(
-          DateFormat('HH:mm').format(message.timestamp),
+          DateFormat('HH:mm a').format(message.timestamp),
           style: const TextStyle(
             fontSize: 12,
             color: Colors.grey,

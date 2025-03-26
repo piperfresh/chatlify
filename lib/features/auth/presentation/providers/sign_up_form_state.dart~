@@ -5,6 +5,9 @@ class SignUpFormState {
   final bool isEmailFocused;
   final bool isPasswordFocused;
   final bool isNameFocused;
+  final bool isEmailValid;
+  final bool isPasswordValid;
+  final bool isNameValid;
 
   SignUpFormState({
     this.email = '',
@@ -13,6 +16,9 @@ class SignUpFormState {
     this.isEmailFocused = false,
     this.isPasswordFocused = false,
     this.isNameFocused = false,
+    this.isEmailValid = false,
+    this.isPasswordValid = false,
+    this.isNameValid = false,
   });
 
   SignUpFormState copyWith({
@@ -22,6 +28,9 @@ class SignUpFormState {
     bool? isEmailFocused,
     bool? isPasswordFocused,
     bool? isNameFocused,
+    bool? isEmailValid,
+    bool? isPasswordValid,
+    bool? isNameValid,
   }) {
     return SignUpFormState(
       email: email ?? this.email,
@@ -30,6 +39,9 @@ class SignUpFormState {
       isEmailFocused: isEmailFocused ?? this.isEmailFocused,
       isPasswordFocused: isPasswordFocused ?? this.isPasswordFocused,
       isNameFocused: isNameFocused ?? this.isNameFocused,
+      isEmailValid: isEmailValid ?? this.isEmailValid,
+      isNameValid: isNameValid ?? this.isNameValid,
+      isPasswordValid: isPasswordValid ?? this.isPasswordValid,
     );
   }
 }

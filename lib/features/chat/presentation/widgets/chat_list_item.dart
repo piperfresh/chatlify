@@ -11,8 +11,6 @@ class ChatListItem extends StatelessWidget {
       required this.time,
       required this.unreadCount,
     required this.onTap,
-    // this.currentUserId,
-    // this.lastMessageSenderId,
     this.isOutgoing = false,
     this.isRead = false,
   });
@@ -23,17 +21,11 @@ class ChatListItem extends StatelessWidget {
   final DateTime time;
   final int unreadCount;
   final VoidCallback onTap;
-
-  // final String? lastMessageSenderId;
-  // final String? currentUserId;
   final bool isOutgoing;
   final bool isRead;
 
   @override
   Widget build(BuildContext context) {
-    // final bool isRead = unreadCount == 0;
-    // final bool isOutGoing = currentUserId == lastMessageSenderId;
-
     return InkWell(
       onTap: onTap,
       child: Container(
