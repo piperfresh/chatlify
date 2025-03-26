@@ -13,7 +13,7 @@ class AppThemes {
           secondary: AppColors.secondary,
           surface: AppColors.background,
           error: AppColors.error),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.greyShade,
       cardColor: AppColors.cardColor,
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.background,

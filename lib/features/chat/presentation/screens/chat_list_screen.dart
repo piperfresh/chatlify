@@ -76,8 +76,6 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                 orElse: () => chat.participantIds.first,
               );
 
-              // final String? lastMessageSenderId = chat.lastMessageSenderId;
-
               return Consumer(
                 builder: (context, ref, child) {
                   final userAsyncValue =

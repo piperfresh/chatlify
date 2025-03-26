@@ -1,7 +1,6 @@
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/presentation/screen/sign_in_screen.dart';
-import 'package:chatlify/features/auth/presentation/screen/sign_up_screen.dart';
-import 'package:chatlify/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:chatlify/features/home/presentation/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +29,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const ChatListScreen();
+                      // return const ChatListScreen();
+                      return const Home();
                     },
                   ),
                 );
