@@ -9,8 +9,10 @@ import 'package:chatlify/features/chat/presentation/widgets/chat_list_item.dart'
 import 'package:chatlify/features/chat/presentation/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../core/app_colors.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../domain/model/message_model.dart';
 import 'chat_screen.dart';
@@ -31,28 +33,35 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages'),
-        backgroundColor: isDarkMode? Theme.of(context).cardColor:Theme.of(context).primaryColor,
-        actions: [
-          IconButton(
-              onPressed: () {
-                ref.read(themeProvider.notifier).toggleTheme();
-              },
-              icon: const Icon(Icons.dark_mode)),
-          IconButton(
-            onPressed: () async {
-              await ref.read(authControllerProvider.notifier).signOut();
-              if (context.mounted) {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ));
-              }
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
+        title: Text(
+          'Chats',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: 20.sp,
+                color: isDarkMode
+                    ? AppColors.white
+                    : Theme.of(context).primaryColor,
+              ),
+        ),
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         ref.read(themeProvider.notifier).toggleTheme();
+        //       },
+        //       icon: const Icon(Icons.dark_mode)),
+        //   IconButton(
+        //     onPressed: () async {
+        //       await ref.read(authControllerProvider.notifier).signOut();
+        //       if (context.mounted) {
+        //         Navigator.pushReplacement(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => const LoginScreen(),
+        //             ));
+        //       }
+        //     },
+        //     icon: const Icon(Icons.logout),
+        //   ),
+        // ],
       ),
       body: chatState.when(
         data: (chats) {
@@ -101,6 +110,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                               : false;
 
                           return ChatListItem(
+                            otherUser: otherUser,
                             name: otherUser.name,
                             lastMessage:
                                 chat.lastMessageText ?? 'Start a conversation',
@@ -128,6 +138,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                           );
                         },
                         loading: () => ChatListItem(
+                          otherUser: otherUser,
                           name: otherUser.name,
                           lastMessage:
                               chat.lastMessageText ?? 'Start a conversation',
@@ -145,6 +156,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                           },
                         ),
                         error: (_, __) => ChatListItem(
+                          otherUser: otherUser,
                           name: otherUser.name,
                           lastMessage:
                               chat.lastMessageText ?? 'Start a conversation',

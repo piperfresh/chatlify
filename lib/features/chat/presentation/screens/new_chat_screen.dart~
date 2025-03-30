@@ -5,6 +5,7 @@ import 'package:chatlify/features/chat/presentation/providers/chat_controller.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/common/app_textfield.dart';
 import 'chat_screen.dart';
 
 class NewChatScreen extends ConsumerStatefulWidget {
@@ -15,6 +16,7 @@ class NewChatScreen extends ConsumerStatefulWidget {
 }
 
 class _NewChatScreenState extends ConsumerState<NewChatScreen> {
+  final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(authControllerProvider);
@@ -31,12 +33,11 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search users...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
+            child: TextFieldWithTitle(
+              title: '',
+              isTitle: false,
+              controller: searchController,
+              hintText: 'Search User',
               onChanged: (value) {
                 ref.read(searchQueryProvider.notifier).state = value;
               },
@@ -72,7 +73,7 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
                               : Text(user.name[0].toUpperCase()),
                         ),
                         title: Text(user.name),
-                        subtitle: Text(user.email),
+                        subtitle: Text(user.email,style: Theme.of(context).textTheme.bodySmall,),
                         onTap: () async {
                           ref.read(isCreatingChatProvider.notifier).state =
                               true;
@@ -107,14 +108,16 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
                     },
                   );
                 },
-                error: (error, stackTrace) => Center(
+                error: (error, stackTrace) {
+                  return Center(
                   child: Text(
                     'Error: $error',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                ),
-                loading: () => Loader(),
+                );
+                },
+                loading: () => const Loader(),
               ),
               if (isCreatingChat)
                 const Center(

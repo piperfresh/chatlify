@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/common/primary_button.dart';
+import '../../../home/presentation/screens/home.dart';
 import '../providers/sign_in_form_notifier.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -85,7 +86,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ChatListScreen(),
+                            // builder: (context) => const ChatListScreen(),
+                            builder: (context) => const Home(),
                           ));
                     }
                   } else {

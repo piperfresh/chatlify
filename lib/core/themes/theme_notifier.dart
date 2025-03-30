@@ -23,4 +23,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     await themeRepository.setThemeMode(isDarkMode);
     state = isDarkMode ? ThemeMode.dark : ThemeMode.light;
   }
+
+  bool get currentTheme => state == ThemeMode.light;
 }

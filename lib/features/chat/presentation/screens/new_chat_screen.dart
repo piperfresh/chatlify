@@ -1,10 +1,12 @@
 import 'package:chatlify/core/common/loader.dart';
+import 'package:chatlify/features/auth/domain/models/user_model.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
 import 'package:chatlify/features/chat/presentation/providers/all_user_provider.dart';
 import 'package:chatlify/features/chat/presentation/providers/chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/common/app_textfield.dart';
 import 'chat_screen.dart';
 
 class NewChatScreen extends ConsumerStatefulWidget {
@@ -15,6 +17,7 @@ class NewChatScreen extends ConsumerStatefulWidget {
 }
 
 class _NewChatScreenState extends ConsumerState<NewChatScreen> {
+  final searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(authControllerProvider);
@@ -31,12 +34,11 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search users...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
+            child: TextFieldWithTitle(
+              title: '',
+              isTitle: false,
+              controller: searchController,
+              hintText: 'Search User',
               onChanged: (value) {
                 ref.read(searchQueryProvider.notifier).state = value;
               },
@@ -65,45 +67,7 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
                     itemCount: filteredList.length,
                     itemBuilder: (context, index) {
                       final user = filteredList[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: user.photoUrl != null
-                              ? Image.network(user.photoUrl!)
-                              : Text(user.name[0].toUpperCase()),
-                        ),
-                        title: Text(user.name),
-                        subtitle: Text(user.email),
-                        onTap: () async {
-                          ref.read(isCreatingChatProvider.notifier).state =
-                              true;
-
-                          try {
-                            final chatId = await ref
-                                .read(chatControllerProvider.notifier)
-                                .startChat(user.id);
-
-                            if (chatId != null && context.mounted) {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
-                                    chatId: chatId,
-                                    otherUser: user,
-                                  ),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
-                              );
-                            }
-                          } finally {
-                            ref.read(isCreatingChatProvider.notifier).state =
-                                false;
-                          }
-                        },
-                      );
+                      return NewChatTile(user: user, ref: ref);
                     },
                   );
                 },
@@ -116,7 +80,7 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
                   ),
                 );
                 },
-                loading: () => Loader(),
+                loading: () => const Loader(),
               ),
               if (isCreatingChat)
                 const Center(
@@ -126,6 +90,58 @@ class _NewChatScreenState extends ConsumerState<NewChatScreen> {
           ))
         ],
       ),
+    );
+  }
+}
+
+class NewChatTile extends StatelessWidget {
+  const NewChatTile({
+    super.key,
+    required this.user,
+    required this.ref,
+  });
+
+  final UserModel user;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: user.photoUrl != null
+            ? Image.network(user.photoUrl!)
+            : Text(user.name[0].toUpperCase()),
+      ),
+      title: Text(user.name),
+      subtitle: Text(user.email, style: Theme.of(context).textTheme.bodySmall),
+      onTap: () async {
+        ref.read(isCreatingChatProvider.notifier).state = true;
+
+        try {
+          final chatId = await ref
+              .read(chatControllerProvider.notifier)
+              .startChat(user.id);
+
+          if (chatId != null && context.mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  chatId: chatId,
+                  otherUser: user,
+                ),
+              ),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $e')),
+            );
+          }
+        } finally {
+          ref.read(isCreatingChatProvider.notifier).state = false;
+        }
+      },
     );
   }
 }

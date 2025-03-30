@@ -3,6 +3,8 @@ import 'package:chatlify/features/auth/domain/models/user_model.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../home/presentation/providers/nav_bar_notifier.dart';
+
 class AuthController extends StateNotifier<AsyncValue<AuthState>> {
   final Ref _ref;
 
@@ -72,6 +74,9 @@ class AuthController extends StateNotifier<AsyncValue<AuthState>> {
     try {
       await _ref.read(firebaseAuthRepositoryProvider).signOut();
       state = AsyncValue.data(AuthState(users: null, currentUser: null));
+
+      /// Reset the navigation bar to its default state
+      _ref.read(navBarProvider.notifier).resetToDefault();
     } catch (e) {
       state = AsyncValue.error(e.toString(), StackTrace.current);
     }

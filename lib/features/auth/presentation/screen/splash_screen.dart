@@ -4,6 +4,8 @@ import 'package:chatlify/features/home/presentation/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../home/presentation/providers/nav_bar_notifier.dart';
+
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,6 +17,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    // Reset navigation bar state when splash screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navBarProvider.notifier).resetToDefault();
+    });
   }
 
 
@@ -26,19 +32,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         next.when(
             data: (user) {
               if (user != null) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      // return const ChatListScreen();
-                      return const Home();
-                    },
-                  ),
+                /// Reset Nav Bar to Zero
+                ref.read(navBarProvider.notifier).resetToDefault();
+
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Home()),
+                  (route) => false,
                 );
               } else {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (_) => const LoginScreen()
-                  ),
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
                 );
               }
             },

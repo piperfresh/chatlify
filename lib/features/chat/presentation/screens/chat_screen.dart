@@ -127,6 +127,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(chatMessageProvider(widget.chatId));
+    final userStream = ref.watch(chatUserStreamProvider(widget.otherUser.id));
 
     /// Add this listener to automatically mark new messages as read when visible
     messagesAsync.whenData(
@@ -282,9 +283,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               .value
                               ?.currentUser
                               ?.id;
-                      return MessageBubble(
-                        message: message,
-                        isMe: isMe, onTap: () {},
+                  return MessageBubble(
+                    userStream: userStream,
+                    message: message,
+                    isMe: isMe, onTap: () {},
                       );
                     },
                   );

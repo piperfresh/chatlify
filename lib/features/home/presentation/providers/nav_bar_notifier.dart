@@ -8,9 +8,15 @@ class NavBarNotifier extends StateNotifier<NavBarState> {
     state = state.copyWith(index: index);
   }
 
+  void resetToDefault() {
+    state = NavBarState(index: 0);
+  }
+
   int get pageIndex => state.index;
 }
 
 final navBarProvider = StateNotifierProvider<NavBarNotifier, NavBarState>(
-  (ref) => NavBarNotifier(),
+  (ref) {
+    return NavBarNotifier();
+  },
 );
