@@ -322,27 +322,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: SafeArea(
                 child: Row(
               children: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+                // IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextFieldWithTitle(
-                      title: '',
-                      isTitle: false,
-                      controller: _messageController,
-                      hintText: 'Type a message',
-                      maxLines: null,
-                    ),
+                  child: TextFieldWithTitle(
+                    title: '',
+                    isTitle: false,
+                    controller: _messageController,
+                    hintText: 'Type a message',
+                    maxLines: null,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.image),
-                  onPressed: _isUploading ? null : _pickImage,
-                ),
+                // IconButton(
+                //   icon: const Icon(Icons.image),
+                //   onPressed: _isUploading ? null : _pickImage,
+                // ),
                 IconButton(
                   icon: _isUploading
                       ? const SizedBox(

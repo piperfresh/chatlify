@@ -4,7 +4,6 @@ import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
 import 'package:chatlify/features/auth/presentation/screen/sign_up_screen.dart';
 import 'package:chatlify/features/auth/presentation/widgets/account_existed_or_not.dart';
-import 'package:chatlify/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -86,7 +85,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            // builder: (context) => const ChatListScreen(),
                             builder: (context) => const Home(),
                           ));
                     }
