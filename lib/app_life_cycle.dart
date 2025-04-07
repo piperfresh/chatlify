@@ -16,7 +16,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
-        onAppStateChanged(false); // App is not active
+        onAppStateChanged(false);
         break;
       default:
         break;

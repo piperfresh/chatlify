@@ -10,9 +10,11 @@ import 'package:chatlify/features/auth/presentation/providers/auth_controller.da
 import 'package:chatlify/features/chat/presentation/providers/chat_controller.dart';
 import 'package:chatlify/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../notification_service.dart';
 import '../widgets/helper.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -37,7 +39,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.initState();
     Future.microtask(
       () {
+        // Set the current chat ID to prevent notifications for this chat
+        ref.read(currentChatIdProvider.notifier).state = widget.chatId;
+
+
         ref.read(chatControllerProvider.notifier).markChatAsRead(widget.chatId);
+
+        _setupNotificationListener();
       },
     );
 
@@ -45,6 +53,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       const Duration(minutes: 2),
       (_) {
         ref.read(firebaseAuthRepositoryProvider).updateOnlineStatus(true);
+      },
+    );
+  }
+
+  void _setupNotificationListener() {
+    // Add a listener to handle any notification taps while in this screen
+    FlutterLocalNotificationsPlugin().initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(),
+      ),
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // Pass payload and context to notification service
+        ref.read(notificationServiceProvider).handleNotificationTap(
+              response.payload,
+              context,
+            );
       },
     );
   }
@@ -121,13 +146,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _messageController.dispose();
     _onlineStatusTimer?.cancel();
 
+    ref.read(currentChatIdProvider.notifier).state = null;
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(chatMessageProvider(widget.chatId));
-    final userStream = ref.watch(chatUserStreamProvider(widget.otherUser.id));
+    final userStream = ref.watch(userChatStreamProvider(widget.otherUser.id));
 
     /// Add this listener to automatically mark new messages as read when visible
     messagesAsync.whenData(
@@ -190,7 +217,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                   Consumer(builder: (context, ref, child) {
                     final userStream =
-                        ref.watch(chatUserStreamProvider(widget.otherUser.id));
+                        ref.watch(userChatStreamProvider(widget.otherUser.id));
                     return userStream.when(
                       data: (user) {
                         if (user == null) return const SizedBox.shrink();

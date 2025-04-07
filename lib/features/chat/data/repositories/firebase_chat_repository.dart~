@@ -286,20 +286,4 @@ class FirebaseChatRepository implements ChatRepository {
       throw Exception('Failed to mark message as read ${e.toString()}');
     }
   }
-
-  Future<ChatModel?> getChatDetails(String chatId) async {
-    try {
-      final docSnapshot = await _fireStore
-          .collection(AppConstants.chats)
-          .doc(chatId)
-          .get();
-
-      if (docSnapshot.exists) {
-        return ChatModel.fromJson(docSnapshot.data()!);
-      }
-      return null;
-    } catch (e) {
-      throw Exception('Failed to get chat details: $e');
-    }
-  }
 }

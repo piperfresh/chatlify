@@ -29,11 +29,11 @@ class ChatModel {
   }
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
-    // Handle unreadCount which might be an int or missing completely
+    /// Handle unreadCount which might be an int or missing completely
     Map<String, int> unreadCountMap = {};
 
     if (json['unreadCount'] is Map) {
-      // If it's already a map, convert it properly
+      /// If it's already a map, convert it properly
       final unreadCountData = json['unreadCount'] as Map;
       unreadCountMap = Map<String, int>.from(
           unreadCountData.map((key, value) => MapEntry(key.toString(), value as int))

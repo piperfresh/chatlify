@@ -9,6 +9,65 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'notification_service.dart';
 
+// class ChatApp extends ConsumerStatefulWidget {
+//   const ChatApp({super.key});
+//
+//   @override
+//   ConsumerState createState() => _ChatAppState();
+// }
+//
+// class _ChatAppState extends ConsumerState<ChatApp> {
+//   late AppLifecycleObserver _appLifecycleObserver;
+//
+//   void _handleMessage(RemoteMessage message) {
+//     log('Handling a message: ${message.messageId}');
+//
+//     if (message.data.containsKey('type') && message.data['type'] == 'chat') {
+//       final chatId = message.data['chatId'];
+//       if (chatId != null) {
+//         log('Chat message received');
+//       }
+//     }
+//   }
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     // NotificationService().setupMessageHandlers(onMessageOpened: _handleMessage);
+//
+//     _appLifecycleObserver = AppLifecycleObserver(
+//       (isActive) {
+//         if (ref.read(authStateStreamProvider).value != null) {
+//           ref.read(firebaseAuthRepositoryProvider).updateOnlineStatus(isActive);
+//         }
+//       },
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _appLifecycleObserver.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final themeMode  = ref.watch(themeProvider);
+//     return ScreenUtilInit(
+//         designSize: const Size(360, 690),
+//         minTextAdapt: true,
+//         builder: (context, child) {
+//           return MaterialApp(
+//             themeMode: themeMode,
+//             debugShowCheckedModeBanner: false,
+//             theme: AppThemes.lightTheme,
+//             darkTheme: AppThemes.darkTheme,
+//             home: const SplashScreen(),
+//           );
+//         }
+//     );
+//   }
+// }
 
 class ChatApp extends ConsumerStatefulWidget {
   const ChatApp({super.key});

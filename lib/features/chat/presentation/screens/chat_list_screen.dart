@@ -28,7 +28,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateStreamProvider);
-    final chatState = ref.watch(chatControllerProvider);
+    final chatAsync = ref.watch(chatControllerProvider);
     final isDarkMode = ref.watch(themeProvider) == ThemeMode.dark;
 
     return Scaffold(
@@ -42,35 +42,11 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                     : Theme.of(context).primaryColor,
               ),
         ),
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         ref.read(themeProvider.notifier).toggleTheme();
-        //       },
-        //       icon: const Icon(Icons.dark_mode)),
-        //   IconButton(
-        //     onPressed: () async {
-        //       await ref.read(authControllerProvider.notifier).signOut();
-        //       if (context.mounted) {
-        //         Navigator.pushReplacement(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => const LoginScreen(),
-        //             ));
-        //       }
-        //     },
-        //     icon: const Icon(Icons.logout),
-        //   ),
-        // ],
       ),
-      body: chatState.when(
+      body: chatAsync.when(
         data: (chats) {
           if (chats.isEmpty) {
-            return const EmptyState(
-              icon: Icons.chat_bubble_outline,
-              title: 'No conversation yet',
-              message: 'Start a new chat with someone',
-            );
+            return _buildChatEmptyState();
           }
 
           return ListView.builder(
@@ -88,7 +64,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
               return Consumer(
                 builder: (context, ref, child) {
                   final userAsyncValue =
-                      ref.watch(chatUserStreamProvider(otherUserId));
+                      ref.watch(userChatStreamProvider(otherUserId));
 
                   return userAsyncValue.when(
                     data: (otherUser) {
@@ -211,6 +187,14 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
           },
           child: SvgPicture.asset('new_chat'.svg)),
     );
+  }
+
+  EmptyState _buildChatEmptyState() {
+    return const EmptyState(
+            icon: Icons.chat_bubble_outline,
+            title: 'No conversation yet',
+            message: 'Start a new chat with someone',
+          );
   }
 
   /// Helper method to check if a message has been read by the receiver

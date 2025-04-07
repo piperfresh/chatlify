@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/themes/theme_notifier.dart';
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   log('Handling a background message ${message.messageId}');
@@ -28,22 +29,26 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  ///Set up Firebase Messaging
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // await NotificationService().initialize();
 
-  ///Request for permission to receive notifications
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  /// Get Fcm Token for the device
-  String? token = await messaging.getToken();
-  log('FCM Token: $token');
-
-  ///Handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // ///Set up Firebase Messaging
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // ///Request for permission to receive notifications
+  // NotificationSettings settings = await messaging.requestPermission(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
+  //
+  // /// Get Fcm Token for the device
+  // String? token = await messaging.getToken();
+  // log('FCM Token: $token');
+  //
+  // ///Handle background messages
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(ProviderScope(overrides: [
     themeProvider.overrideWith(

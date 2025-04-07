@@ -229,7 +229,20 @@ final chatControllerProvider =
 // }
 
 
+Future<String> _getAccessToken() async {
+  try {
+    // Use Firebase Auth to get the current user's ID token
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('User not authenticated');
 
+    final idToken = await user.getIdToken();
+    print('This is the id token: $idToken');
+    return idToken ?? '';
+  } catch (e) {
+    print('Error getting access token: $e');
+    throw Exception('Failed to get access token: $e');
+  }
+}
 
 
 class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {

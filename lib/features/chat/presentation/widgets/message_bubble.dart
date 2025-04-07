@@ -39,7 +39,6 @@ class MessageBubble extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // The content with proper intrinsic sizing
             Container(
               margin: EdgeInsets.only(
                 left: isMe ? 0 : 10,
@@ -57,10 +56,8 @@ class MessageBubble extends StatelessWidget {
                           !isMe ? Radius.zero : const Radius.circular(20),
                       topRight: const Radius.circular(20)),
                   color: bubbleColor,
-                  // shape: BubbleShape(isMe: isMe),
                   child: GestureDetector(
                     onTap: onTap,
-                    // borderRadius: BorderRadius.circular(20),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                       child: Column(
@@ -92,7 +89,6 @@ class MessageBubble extends StatelessWidget {
                                  4.sbW,
                                 if (isMe) ...[
                                   const SizedBox(width: 4),
-                                  // _buildReadStatus(message, isMe),
                                   _buildReadStatus(message, isMe,
                                       userStream: userStream),
                                 ],
@@ -137,60 +133,7 @@ class MessageBubble extends StatelessWidget {
               isReadByRecipients ? Colors.blue : Colors.white.withOpacity(0.7),
         ),
         4.sbW,
-        // userStream.when(
-        //   data: (user) {
-        //     if (user!.isOnline) {
-        //       return Icon(
-        //         isReadByRecipients ? Icons.done_all : Icons.done_all,
-        //         color: isReadByRecipients
-        //             ? Colors.blue
-        //             : Colors.white.withOpacity(0.7),
-        //       );
-        //     } else {
-        //       return Icon(
-        //         Icons.done,
-        //         color: Colors.white.withOpacity(0.7),
-        //       );
-        //     }
-        //   },
-        //   error: (error, stackTrace) {
-        //     return Icon(
-        //       Icons.done,
-        //       color: Colors.white.withOpacity(0.7),
-        //     );
-        //   },
-        //   loading: () {
-        //     return const SizedBox.shrink();
-        //   },
-        // ),
       ],
     );
   }
-// Widget _buildReadStatus(MessageModel message, bool isMe,) {
-//   if (!isMe) return const SizedBox.shrink();
-//   bool isReadByRecipients = false;
-//
-//   if (message.readStatus.isNotEmpty) {
-//     isReadByRecipients = message.readStatus.entries
-//         .where((entry) => entry.key != message.senderId)
-//         .any((entry) => entry.value == true);
-//   }
-//   return Row(
-//     children: [
-//       Icon(
-//         isReadByRecipients ? Icons.done_all : Icons.done,
-//         color:
-//             isReadByRecipients ? Colors.blue : Colors.white.withOpacity(0.7),
-//       ),
-//       4.sbW,
-//       Text(
-//         DateFormat('HH:mm a').format(message.timestamp),
-//         style: const TextStyle(
-//           fontSize: 12,
-//           color: Colors.grey,
-//         ),
-//       ),
-//     ],
-//   );
-// }
 }

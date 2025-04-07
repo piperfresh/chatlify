@@ -43,7 +43,7 @@ class ChatListItem extends StatelessWidget {
           children: [
             Consumer(builder: (context, ref, child) {
               final userStream =
-                  ref.watch(chatUserStreamProvider(otherUser.id));
+                  ref.watch(userChatStreamProvider(otherUser.id));
               return Stack(
                 children: [
                   CircleAvatar(
@@ -114,7 +114,7 @@ class ChatListItem extends StatelessWidget {
                   4.sbH,
                   Consumer(builder: (context, ref, child) {
                     final userStream =
-                        ref.watch(chatUserStreamProvider(otherUser.id));
+                        ref.watch(userChatStreamProvider(otherUser.id));
                     return _buildMessageStatusIcon(userStream, context);
                   })
                 ],

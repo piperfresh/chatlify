@@ -56,4 +56,9 @@ class MessageModel {
       readStatus: readStatusMap,
     );
   }
+
+  @override
+  String toString() {
+    return 'MessageModel{content: $content, type: $type, timestamp: $timestamp, readStatus: $readStatus}';
+  }
 }
