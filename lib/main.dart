@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chatlify/app.dart';
 import 'package:chatlify/core/themes/theme_repository.dart';
 import 'package:chatlify/core/themes/theme_storage.dart';
+import 'package:chatlify/features/call/call_listener.dart';
 import 'package:chatlify/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -55,5 +56,5 @@ void main() async {
       (ref) =>
           ThemeNotifier(ThemeRepository(themeStorage))..initTheme(savedTheme),
     )
-  ], child: const ChatApp()));
+  ], child: ChatApp()));
 }

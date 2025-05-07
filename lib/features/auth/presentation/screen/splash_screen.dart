@@ -41,7 +41,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 );
               } else {
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
                   (route) => false,
                 );
               }
@@ -49,7 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             error: (error, stackTrace) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (_) => const LoginScreen()
+                  builder: (_) => const SignInScreen()
                 ),
               );
             },

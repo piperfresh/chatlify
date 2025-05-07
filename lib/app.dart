@@ -3,6 +3,7 @@ import 'package:chatlify/core/themes/app_themes.dart';
 import 'package:chatlify/core/themes/theme_notifier.dart';
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/presentation/screen/splash_screen.dart';
+import 'package:chatlify/features/call/call_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,7 +73,7 @@ class _ChatAppState extends ConsumerState<ChatApp> with WidgetsBindingObserver {
             debugShowCheckedModeBanner: false,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
-            home: const SplashScreen(),
+            home: const CallListener(child: SplashScreen()),
             navigatorKey: GlobalNavigator
                 .key, // Add a global navigator key for notifications
           );

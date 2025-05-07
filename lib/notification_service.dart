@@ -134,7 +134,7 @@ class NotificationService {
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       log('App opened from terminated state with message: ${initialMessage.messageId}');
-      // We'll handle this message when context is available
+
     }
 
     // Listen for foreground messages
@@ -150,11 +150,7 @@ class NotificationService {
 
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
-      announcement: false,
       badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
       sound: true,
     );
 

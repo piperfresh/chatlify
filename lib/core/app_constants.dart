@@ -13,4 +13,7 @@ class AppConstants{
   static const isRead = 'isRead';
   static const chatImages = 'chat_images';
   static const lastMessageSenderId = 'lastMessageSenderId';
+  static const calls = 'calls';
+  static const agoraAppId = 'bb0fe67208c044bab25c86f04cad4e06';
 }
+

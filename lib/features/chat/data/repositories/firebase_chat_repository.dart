@@ -174,7 +174,7 @@ class FirebaseChatRepository implements ChatRepository {
         readStatus: readStatus,
       );
 
-      // Add message to FireStore
+      /// Add message to FireStore
       await _fireStore
           .collection(AppConstants.messages)
           .doc(message.messageId)
@@ -186,12 +186,12 @@ class FirebaseChatRepository implements ChatRepository {
         AppConstants.lastMessageText: message.content,
       };
 
-      // Increment unread count for each participant except sender
+      /// Increment unread count for each participant except sender
       for (String participantId in participantIds) {
         if (participantId != message.senderId) {
           chatUpdates['unreadCount.$participantId'] = FieldValue.increment(1);
         } else {
-          // Mark the message as read for the sender
+          /// Mark the message as read for the sender
           chatUpdates['unreadCount.$participantId'] = 0;
         }
       }

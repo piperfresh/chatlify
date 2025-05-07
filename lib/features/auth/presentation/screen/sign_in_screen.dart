@@ -1,24 +1,21 @@
-import 'package:chatlify/core/common/app_snack_bar.dart';
-import 'package:chatlify/core/common/app_textfield.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
-import 'package:chatlify/features/auth/presentation/screen/sign_up_screen.dart';
 import 'package:chatlify/features/auth/presentation/widgets/account_existed_or_not.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/common/primary_button.dart';
+import '../../../../core/common/common.dart';
 import '../../../home/presentation/screens/home.dart';
 import '../providers/sign_in_form_notifier.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class SignInScreen extends ConsumerStatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  ConsumerState createState() => _LoginScreenState();
+  ConsumerState createState() => _SignInScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -68,6 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onFocusChange: (hasFocus) {
                   signInFormNotifier.setPasswordFocus(hasFocus);
                 },
+                obscureText: true,
                 errorText: signInFormNotifier.validatePassword(),
                 isErrorTextAvailable: !signInFormNotifier.isPasswordValid,
               ),
@@ -103,7 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const SignUpScreen(),
+                      builder: (_) => const SignInScreen(),
                     ),
                   );
                 },

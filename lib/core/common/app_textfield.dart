@@ -21,6 +21,7 @@ class TextFieldWithTitle extends StatelessWidget {
   final FocusNode? focusNode;
   final String? errorText;
   final bool isErrorTextAvailable;
+  final bool obscureText;
 
   const TextFieldWithTitle({
     super.key,
@@ -41,6 +42,7 @@ class TextFieldWithTitle extends StatelessWidget {
     this.focusNode,
     this.errorText,
     this.isErrorTextAvailable = false,
+    this.obscureText = false,
   });
 
   @override
@@ -71,6 +73,7 @@ class TextFieldWithTitle extends StatelessWidget {
             maxLines: maxLines,
             validator: validator,
             onChanged: onChanged,
+            obscureText: obscureText,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),

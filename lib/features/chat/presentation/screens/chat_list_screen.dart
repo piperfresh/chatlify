@@ -2,7 +2,6 @@ import 'package:chatlify/core/common/loader.dart';
 import 'package:chatlify/core/extension/assets_extension.dart';
 import 'package:chatlify/core/themes/theme_notifier.dart';
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
-import 'package:chatlify/features/auth/presentation/screen/sign_in_screen.dart';
 import 'package:chatlify/features/chat/presentation/providers/chat_controller.dart';
 import 'package:chatlify/features/chat/presentation/screens/new_chat_screen.dart';
 import 'package:chatlify/features/chat/presentation/widgets/chat_list_item.dart';
@@ -13,7 +12,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/app_colors.dart';
-import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../domain/model/message_model.dart';
 import 'chat_screen.dart';
 

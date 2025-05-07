@@ -109,7 +109,7 @@ class ProfileScreen extends ConsumerWidget {
                   await Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
+                      builder: (context) => const SignInScreen(),
                     ),
                     (route) => false,
                   );

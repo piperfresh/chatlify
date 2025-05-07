@@ -1,16 +1,12 @@
-import 'dart:convert';
-
 import 'package:chatlify/core/enum.dart';
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/domain/models/user_model.dart';
 import 'package:chatlify/features/chat/data/repositories/firebase_chat_repository.dart';
 import 'package:chatlify/features/chat/domain/model/chat_model.dart';
 import 'package:chatlify/features/chat/domain/model/message_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
 
 /// To track the last message sender
 final lastMessageProvider = StreamProvider.family<List<MessageModel>?, String>(
@@ -40,197 +36,6 @@ final chatControllerProvider =
     return ChatController(ref, const Uuid());
   },
 );
-
-// class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
-//   ChatController(this._ref, this._uuid) : super(const AsyncValue.loading()) {
-//     _loadChats();
-//   }
-//
-//   final Ref _ref;
-//   final Uuid _uuid;
-//
-//   Future<void> _loadChats() async {
-//     final user =
-//         await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//     if (user == null) {
-//       state = const AsyncValue.data([]);
-//       return;
-//     }
-//
-//     _ref.read(firebaseChatRepositoryProvider).getUserChats(user.id).listen(
-//         (chats) {
-//       state = AsyncValue.data(chats);
-//     }, onError: (error) {
-//       state = AsyncValue.error(error, StackTrace.current);
-//     });
-//   }
-//
-//   Stream<List<MessageModel>> getChatMessages(String chatId) {
-//     return _ref.read(firebaseChatRepositoryProvider).getChatMessages(chatId);
-//   }
-//
-//   Future<String?> startChat(String userId) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       /// Check if chats already exists
-//       final participantIds = [currentUser.id, userId];
-//       final existingChatId = await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .getChatId(participantIds);
-//
-//       if (existingChatId != null) {
-//         return existingChatId;
-//       }
-//
-//       final chatId = _uuid.v4();
-//       final chat = ChatModel(
-//           id: chatId,
-//           participantIds: participantIds,
-//           createdAt: DateTime.now(),
-//           lastMessageAt: DateTime.now(),
-//           unreadCount: {userId: 0, currentUser.id: 0});
-//
-//       await _ref.read(firebaseChatRepositoryProvider).createChat(chat);
-//       return chatId;
-//     } catch (e) {
-//       throw Exception('Failed to start chat: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<void> sendTextMessage(String chatId, String text) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       final message = MessageModel(
-//         messageId: _uuid.v4(),
-//         chatId: chatId,
-//         senderId: currentUser.id,
-//         content: text,
-//         type: MessageType.text,
-//         timestamp: DateTime.now(),
-//         isRead: false,
-//       );
-//
-//       await _ref.read(firebaseChatRepositoryProvider).sendMessage(message);
-//     } catch (e) {
-//       throw Exception('Failed to send message: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<void> sendImageMessage(String chatId, XFile image) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       /// Upload image to storage
-//       final imageUrl = await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .uploadImage(image.path);
-//
-//       final message = MessageModel(
-//         messageId: _uuid.v4(),
-//         chatId: chatId,
-//         senderId: currentUser.id,
-//         content: imageUrl,
-//         type: MessageType.image,
-//         timestamp: DateTime.now(),
-//         isRead: false,
-//       );
-//
-//       await _ref.read(firebaseChatRepositoryProvider).sendMessage(message);
-//     } catch (e) {
-//       throw Exception('Failed to send image message: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<void> markChatAsRead(String chatId) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .markChatAsRead(chatId, currentUser.id);
-//     } catch (e) {
-//       throw Exception('Failed to mark chat as read: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<void> markMessageAsRead(String messageId) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .markMessageAsRead(messageId, currentUser.id);
-//     } catch (e) {
-//       throw Exception('Failed to mark message as read: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<List<UserModel>> searchUser(String query) async {
-//     try {
-//       return await _ref.read(firebaseChatRepositoryProvider).searchUser(query);
-//     } catch (e) {
-//       throw Exception('Failed to search user ${e.toString()}');
-//     }
-//   }
-//
-//   Future<UserModel?> getUserById(String userId) async {
-//     try {
-//       return await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .getUserById(userId);
-//     } catch (e) {
-//       throw Exception('Failed to get user: ${e.toString()}');
-//     }
-//   }
-//
-//   Future<void> resetUnreadCount(String chatId) async {
-//     try {
-//       final currentUser =
-//           await _ref.read(firebaseAuthRepositoryProvider).getCurrentUser();
-//
-//       if (currentUser == null) {
-//         throw Exception('Not authenticated');
-//       }
-//
-//       await _ref
-//           .read(firebaseChatRepositoryProvider)
-//           .markChatAsRead(chatId, currentUser.id);
-//     } catch (e) {
-//       throw Exception('Failed to reset unread count: ${e.toString()}');
-//     }
-//   }
-// }
-
-
-
-
 
 class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
   ChatController(this._ref, this._uuid) : super(const AsyncValue.loading()) {
@@ -295,80 +100,6 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
     }
   }
 
-  Future<void> sendNotificationOnNewMessage(
-      MessageModel message, UserModel sender) async {
-    try {
-      /// Get chat to find recipient
-      final chat = await _ref
-          .read(firebaseChatRepositoryProvider)
-          .getChatDetails(message.chatId);
-      if (chat == null) return;
-
-      ///Find recipient id(the user who is not the sender)
-      final recipientId =
-          chat.participantIds.firstWhere((id) => id != sender.id);
-
-      /// Get recipient details including fcm token
-      final recipient = await _ref
-          .read(firebaseChatRepositoryProvider)
-          .getUserById(recipientId);
-      if (recipient == null ||
-          recipient.fcmToken == null ||
-          recipient.fcmToken!.isEmpty) return;
-
-      ///Create notification payload
-      final notificationData = {
-        'message': {
-          'token': recipient.fcmToken,
-          'notification': {
-            'title': sender.name,
-            'body': message.type == MessageType.text ? message.content : 'Sent an image'
-          },
-          'data': {
-            'type': 'chat',
-            'chatId': message.chatId,
-            'messageId': message.messageId,
-            'senderId': sender.id,
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK'
-          },
-          'android': {
-            'priority': 'high',
-            'notification': {
-              'channel_id': 'high_importance_channel'
-            }
-          },
-          'apns': {
-            'payload': {
-              'aps': {
-                'sound': 'default'
-              }
-            }
-          }
-        }
-      };
-
-      /// Send Fcm directly using http
-      final response = await http.post(
-        Uri.parse('https://fcm.googleapis.com/v1/projects/chatlify-89dd3/messages:send'),
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer ${await _getAccessToken()}', // Use OAuth2 instead of server key
-          'Authorization': 'key=100718002104598733973', // Use OAuth2 instead of server key
-        },
-        body: jsonEncode(notificationData),
-      );
-
-      if (response.statusCode != 200) {
-        print('Notification error response: ${response.body}');
-        throw Exception('Failed to send notification: ${response.body}');
-      } else {
-        print('Notification sent successfully');
-      }
-    } catch (e) {
-      print('Error sending notification: $e');
-    }
-  }
-
   Future<void> sendTextMessage(String chatId, String text) async {
     try {
       final currentUser =
@@ -389,21 +120,6 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
       );
 
       await _ref.read(firebaseChatRepositoryProvider).sendMessage(message);
-
-      /// Get current user details
-      final user = await _ref
-          .read(firebaseChatRepositoryProvider)
-          .getUserById(currentUser.id);
-      if (user != null) {
-        /// Send notification
-        print('Prepare to send notification');
-        print('Message: ${message.toJson()}');
-        print('User: ${user.toJson()}');
-        await sendNotificationOnNewMessage(message, user);
-        print('Notification sent');
-      } else {
-        throw Exception('Failed to get current user');
-      }
     } catch (e) {
       throw Exception('Failed to send message: ${e.toString()}');
     }
@@ -507,3 +223,4 @@ class ChatController extends StateNotifier<AsyncValue<List<ChatModel>>> {
     }
   }
 }
+

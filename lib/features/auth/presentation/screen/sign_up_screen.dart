@@ -1,4 +1,3 @@
-import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
 import 'package:chatlify/features/auth/presentation/providers/sign_up_form_notifier.dart';
@@ -6,8 +5,7 @@ import 'package:chatlify/features/auth/presentation/screen/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/common/app_textfield.dart';
-import '../../../../core/common/primary_button.dart';
+import '../../../../core/common/common.dart';
 import '../widgets/account_existed_or_not.dart';
 
 
@@ -78,6 +76,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 onFocusChange: (hasFocus) {
                   signUpFormNotifier.setPasswordFocused(hasFocus);
                 },
+                obscureText: true,
                 errorText: signUpFormNotifier.validatePassword(),
                 isErrorTextAvailable: !signUpFormNotifier.isPasswordValid,
               ),
@@ -97,7 +96,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       if (context.mounted) {
                         Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
-                            return const LoginScreen();
+                            return const SignUpScreen();
                               },
                             ));
                       }
@@ -113,7 +112,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
+                      builder: (_) => const SignUpScreen(),
                     ),
                   );
                 },

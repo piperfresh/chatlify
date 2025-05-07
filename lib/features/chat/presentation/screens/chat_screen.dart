@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:chatlify/core/common/app_snack_bar.dart';
 import 'package:chatlify/core/common/app_textfield.dart';
 import 'package:chatlify/core/common/loader.dart';
+import 'package:chatlify/core/enum.dart';
 import 'package:chatlify/core/extension/size_extension.dart';
 import 'package:chatlify/features/auth/data/repository/firebase_auth_repository.dart';
 import 'package:chatlify/features/auth/domain/models/user_model.dart';
 import 'package:chatlify/features/auth/presentation/providers/auth_controller.dart';
+import 'package:chatlify/features/call/presentation/provider/call_controller.dart';
 import 'package:chatlify/features/chat/presentation/providers/chat_controller.dart';
 import 'package:chatlify/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../notification_service.dart';
+import '../../../call/presentation/screens/call_screen.dart';
 import '../widgets/helper.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -151,6 +154,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.dispose();
   }
 
+  void initiateCall(CallType type) async {
+    try {
+      final callId = await ref
+          .read(callControllerProvider.notifier)
+          .initiateCall(widget.chatId, widget.otherUser.id, type);
+      if (callId != null && mounted) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return CallScreen(
+              otherUser: widget.otherUser,
+              call: ref.read(callControllerProvider).value!,
+            );
+          },
+        ));
+      }
+    } catch (e) {
+      if (mounted) {
+        print(e.toString());
+        appSnackBar(context, 'Failed to initiate call: ${e.toString()}');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(chatMessageProvider(widget.chatId));
@@ -271,12 +297,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           IconButton(
             icon: const Icon(Icons.call),
             onPressed: () {
-              // TODO: Implement call feature
+              initiateCall(CallType.voice);
             },
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.videocam),
             onPressed: () {
+              initiateCall(CallType.video);
             },
           ),
         ],
